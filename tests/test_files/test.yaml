@@ -1,0 +1,6 @@
+name: Gintama
+url: http://something.com
+volumes: 
+  V1:
+    - 1
+    - 2
