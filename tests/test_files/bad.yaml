@@ -1,5 +1,4 @@
 name: Gintama
-url: http://something.com
 volumes: 
   V1:
     start_chapter: 0
