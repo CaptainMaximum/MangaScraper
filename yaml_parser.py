@@ -67,7 +67,7 @@ def stringify_volume_list(volume_list):
 def chapters_to_bash_assignments(volume_chapter_map):
     ret_array = []
     for v in volume_chapter_map.keys():
-        assign_string = re.sub(" ", "", str(v)) + "='*" + str(v) + "* "
+        assign_string = re.sub(" ", "", str(v)) + "='@" + str(v) + "@ "
         chapter_list = [str(x) for x in volume_chapter_map[v]]
         assign_string += " ".join(chapter_list)
         assign_string += "'"

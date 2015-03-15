@@ -2,7 +2,7 @@ import unittest
 
 from yaml_parser import *
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestParserFunctions(unittest.TestCase):
 
     # Tests the yaml parser to make sure it converts it correctly to a dictionary 
     # object
@@ -131,7 +131,7 @@ class TestSequenceFunctions(unittest.TestCase):
     # Tests chapters_to_bash_assignments to ensure that the function returns
     # a list of strings representing bash variable assignments
     def test_chapters_to_bash_assignments(self):
-        expected = ["V1='*V1* 1 2 3 4'", "V2='*V2* 5 6 7 8'"]
+        expected = ["V1='@V1@ 1 2 3 4'", "V2='@V2@ 5 6 7 8'"]
         _input = {
             'V1': [1, 2, 3, 4],
             'V2': [5, 6, 7, 8]
@@ -144,7 +144,7 @@ class TestSequenceFunctions(unittest.TestCase):
     # the actual assigned value (the name in stars) because the name in stars
     # is what the file name will eventually be
     def test_chapters_to_bash_assignmetns_spaces(self):
-        expected = ["Vol1='*Vol 1* 1 2 3'", "Vol2='*Vol 2* 4 5 6'"]
+        expected = ["Vol1='@Vol 1@ 1 2 3'", "Vol2='@Vol 2@ 4 5 6'"]
         _input = {
             'Vol 1': [1, 2, 3],
             'Vol 2': [4, 5, 6]
