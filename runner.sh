@@ -1,7 +1,6 @@
 YAML_FILE=$1
 CLEAN=$2
 
-
 output=$(python yaml_parser.py $YAML_FILE)
 
 errcode=$?
@@ -21,7 +20,8 @@ fi
 
 if [ ! -e $NAME ]
   then
-  mkdir $NAME
+  mkdir "$NAME"
+  mkdir "$NAME/volumes"
 fi
 
 echo "Getting comic page"
@@ -37,26 +37,43 @@ do
   x=$(eval echo $(echo $i))
   # pull out everything inside of the stars
   volname=$(echo $x | sed -r "s/@(.+)@.*/\1/")
+  voldir=$(echo $volname | sed -r "s/ //g")
   echo "Volume name:"
   echo $volname
   # pull out everything after the stars
   chaplist=$(echo $x | sed -r "s/@.+@(.+)/\1/")
   output=$(echo $main_page | python chapter_link_extractor.py "$chaplist")
   eval $(echo $output)
-  if [[ ! -e "$NAME/$volname" ]]
+  if [[ ! -e "$NAME/$voldir" ]]
     then
-    mkdir "$NAME/$volname"
+    mkdir "$NAME/$voldir"
+    mkdir "$NAME/$voldir/chapters"
   fi
 
   for j in $CHAPTERS
   do
-    echo $j | sed -r "s/.+chapter=([^&]+)&.+/\1/"
+    chapname=$(echo $j | sed -r "s/.+chapter=([^&]+)&.+/\1/")
+    echo $chapname
     chap=$(curl -s $j)
     pics=$(echo $chap | python chapter_picture_extractor.py)
+    if [[ -e "$NAME/$voldir/$chapname" ]]
+      then
+      rm "$NAME/$voldir/$chapname/"*
+    fi
+
+    if [[ ! -e "$NAME/$voldir/$chapname" ]]
+      then
+      mkdir "$NAME/$voldir/$chapname"
+    fi
+
     for pic in $pics
     do
-      echo $pic | sed -r "s/.+\/([0-9]+-[0-9]+).png/\1.jpg/"
+      filename=$(echo $pic | sed -r "s/.+\/([0-9\.]+-[0-9]+).png/\1.jpg/")
+      curl $pic -s -o "$NAME/$voldir/$chapname/$filename" &
     done
+    wait
+    convert "$NAME/$voldir/$chapname/*.jpg" "$NAME/$voldir/chapters/$chapname".pdf
   done
+    pdftk $(find "$NAME/$voldir/chapters/"* | sort -V) cat output "$NAME/volumes/$volname".pdf
 
 done
